@@ -11,8 +11,8 @@ namespace Arcon.SyncFerrero
 
     class OrdProduzione
     {
-        public string dest = @"C:\Users\Stage1\Desktop\Consegna";
-        public string fonte = @"C:\Users\Stage1\Desktop\Consegna\consegna";
+        public string dest = @"C:\Users\Stage1\Desktop\File\Consegna";
+        public string fonte = @"C:\Users\Stage1\Desktop\File\Consegna\consegna";
         
         public int NUMERO { get; set; }
         public string codlinea { get; set; }
@@ -22,6 +22,9 @@ namespace Arcon.SyncFerrero
         public int RILASCIO { get; set; }
         public string dt_agg { get; set; }
         public DateTime DataInserimento { get; set; }
+        public double quantita { get; set; }
+        public string dataInizio { get; set; }
+        public string dataFine { get; set; }
 
         public OrdProduzione(SqlDataReader rd)
         {
@@ -32,13 +35,40 @@ namespace Arcon.SyncFerrero
             codlinea = (string)rd["COD_LINEA"];
             risorsaprimaria = (string)rd["RISORSA_PRIMARIA"];
             usage = (string)rd["USAGE"];
+            quantita = (double)rd["QTA_PROGRAMMATA"];
+            dataInizio = Convert.ToString((DateTime)rd["DATA_INIZIO"]);
+            dataFine = Convert.ToString((DateTime)rd["DATA_FINE"]);
             
 
         }
 
         
 
-        public static List<OrdProduzione> GetAll()
+        public static void Insert(OrdProduzione c)
+        {
+            List<OrdProduzione> list = new List<OrdProduzione>();
+            using (SqlConnection conn = new SqlConnection(Global.DB_CONNECTIONSTRING))
+            {
+                conn.Open();
+
+                string query = $"INSERT INTO Persone(NUMERO,N_OLS,RILASCIO,DataInserimento) VALUES('{c.NUMERO}', '{c.N_OLS}', '{c.RILASCIO}', '{c.DataInserimento}')";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                   
+                }
+                
+            }
+
+        }
+    }
+
+    class DistintaBase
+    {
+        public string dest = @"C:\Users\Stage1\Desktop\File\DistintaBase";
+        public string fonte = @"C:\Users\Stage1\Desktop\File\DistintaBase\consegna";
+
+         public static List<OrdProduzione> GetAll()
         {
             List<OrdProduzione> list = new List<OrdProduzione>();
             using (SqlConnection conn = new SqlConnection(Global.DB_CONNECTIONSTRING))
@@ -59,7 +89,7 @@ namespace Arcon.SyncFerrero
                 }
             }
             return list;
-        }
+        } 
     }
     
 }
